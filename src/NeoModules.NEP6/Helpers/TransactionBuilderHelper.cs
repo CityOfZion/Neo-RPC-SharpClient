@@ -112,6 +112,19 @@ namespace NeoModules.NEP6.Helpers
                 return unspentsOrdered.Take(i).Concat(new[] { unspentsOrdered.Last(p => p.Output.Value >= amount) }).ToArray();
         }
 
+        /// <summary>
+        /// Builds a contract script to be deployed on the network.
+        /// </summary>
+        /// <param name="contractScript"></param>
+        /// <param name="parameterList"></param>
+        /// <param name="returnType"></param>
+        /// <param name="properties"></param>
+        /// <param name="name"></param>
+        /// <param name="version"></param>
+        /// <param name="author"></param>
+        /// <param name="email"></param>
+        /// <param name="description"></param>
+        /// <returns></returns>
         public static byte[] PrepareDeployContract(byte[] contractScript, byte[] parameterList,
             ContractParameterType returnType, ContractPropertyState properties,
             string name, string version, string author, string email, string description)

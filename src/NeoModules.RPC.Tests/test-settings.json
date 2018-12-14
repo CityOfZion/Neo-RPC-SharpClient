@@ -1,6 +1,6 @@
 {
   "mainNetSettings": {
-    "rpcUrl": "http://seed2.aphelion-neo.com:10332",
+    "rpcUrl": "http://seed6.ngd.network:10332",
     "defaultAccount": "ASJiT56jYKZgTN9FtGvjRenbdBKTZ98QVw",
     "debugLogLocation": "C:\\Users\\bruno\\Documents\\Source\\Repos\\NeoDraftRpc\\log.txt",
     "blockhash": "4bf4f45de266b5f098b93724ad8819b66d1ddb6e6dfb11cc60ec75e6cc64970d",

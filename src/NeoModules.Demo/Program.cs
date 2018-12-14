@@ -148,33 +148,30 @@ namespace NeoModules.Demo
 
             var neoService = new NeoApiService(RpcClient);
 
-            // Get account signer for transactions
-            if (importedAccount.TransactionManager is AccountSignerTransactionManager accountSignerTransactionManager)
-            {
-                //invoke test example using Phantasma smart contract
-                var method = "getMailboxFromAddress"; //operation
-                var contractScriptHash = "ed07cffad18f1308db51920d99a2af60ac66a7b3"; // smart contract scripthash
-                var script = NEP6.Helpers.Utils.GenerateScript(contractScriptHash, method,
-                    new object[] { "ARcZoZPn1ReBo4LPLvkEteyLu6S2A5cvY2".ToScriptHash().ToArray() });
-                var result = await neoService.Contracts.InvokeScript.SendRequestAsync(script.ToHexString());
-                var content = Encoding.UTF8.GetString(result.Stack[0].Value.ToString().HexToBytes()); //the way you read a result can vary
+            //invoke test example using Phantasma smart contract
+            var method = "getMailboxFromAddress"; //operation
+            var contractScriptHash = "ed07cffad18f1308db51920d99a2af60ac66a7b3"; // smart contract scripthash
+            var script = NEP6.Helpers.Utils.GenerateScript(contractScriptHash, method,
+                new object[] { "ARcZoZPn1ReBo4LPLvkEteyLu6S2A5cvY2".ToScriptHash().ToArray() });
+            var result = await neoService.Contracts.InvokeScript.SendRequestAsync(script.ToHexString());
+            var content = Encoding.UTF8.GetString(result.Stack[0].Value.ToString().HexToBytes()); //the way you read a result can vary
 
-                //call contract example using Phantasma smart contract
-                var RegisterInboxOperation = "registerMailbox"; //operation
-                var user = importedAccount.Address.ToArray();
-                var args = new object[] { user, "neomodules" };
+            //call contract example using Phantasma smart contract
+            var RegisterInboxOperation = "registerMailbox"; //operation
+            var user = importedAccount.Address.ToArray();
+            var args = new object[] { user, "neomodules" };
 
-                var transaction = await accountSignerTransactionManager.CallContract("ed07cffad18f1308db51920d99a2af60ac66a7b3",
-                    RegisterInboxOperation,     //operation
-                    args,                       // arguments
-                    null,                       // array of transfer outputs you want to attach gas or neo with the contract call (optional)
-                    0m,                         // network fee (optional)
-                    null                        // attributes (optional)
-                    );
+            var transaction = await importedAccount.TransactionManager.CallContract("ed07cffad18f1308db51920d99a2af60ac66a7b3",
+                RegisterInboxOperation,     //operation
+                args,                       // arguments
+                null,                       // array of transfer outputs you want to attach gas or neo with the contract call (optional)
+                0m,                         // network fee (optional)
+                null                        // attributes (optional)
+                );
 
 
-                // list of transfer outputs
-                var transferOutputWithNep5AndGas = new List<TransferOutput>
+            // list of transfer outputs
+            var transferOutputWithNep5AndGas = new List<TransferOutput>
                 {
                     new TransferOutput
                     {
@@ -190,7 +187,7 @@ namespace NeoModules.Demo
                     }
                 };
 
-                var transferOutputWithOnlyGas = new List<TransferOutput>
+            var transferOutputWithOnlyGas = new List<TransferOutput>
                 {
                     new TransferOutput
                     {
@@ -200,28 +197,28 @@ namespace NeoModules.Demo
                     }
                 };
 
-                // Claims unclaimed gas. Does not spent your neo to make gas claimable, you have to do it yourself!
-                var claim = await accountSignerTransactionManager.ClaimGas();
+            // Claims unclaimed gas. Does not spent your neo to make gas claimable, you have to do it yourself!
+            var claim = await importedAccount.TransactionManager.ClaimGas();
 
-                // Transfer NEP5 and gas with fee
-                var invocationTx = await accountSignerTransactionManager.TransferNep5(null, transferOutputWithNep5AndGas, null, 0.00001m);
+            // Transfer NEP5 and gas with fee
+            var invocationTx = await importedAccount.TransactionManager.TransferNep5(null, transferOutputWithNep5AndGas, null, 0.00001m);
 
-                // Send native assets (NEO and GAS) with fee
-                var nativeTx = await accountSignerTransactionManager.SendNativeAsset(null, transferOutputWithOnlyGas, null, 0.0001m);
+            // Send native assets (NEO and GAS) with fee
+            var nativeTx = await importedAccount.TransactionManager.SendNativeAsset(null, transferOutputWithOnlyGas, null, 0.0001m);
 
-                // Call contract
-                var scriptHash = "a58b56b30425d3d1f8902034996fcac4168ef71d".ToScriptHash().ToArray(); // ASA e.g
-                var operation = "your operation here";
-                var arguments = new object[] { "arg1", "arg2", "etc" };
+            // Call contract
+            var scriptHash = "a58b56b30425d3d1f8902034996fcac4168ef71d".ToScriptHash().ToArray(); // ASA e.g
+            var operation = "your operation here";
+            var arguments = new object[] { "arg1", "arg2", "etc" };
 
-                // Estimate Gas consumed from contract call
-                var estimateContractGasCall =
-                    await accountSignerTransactionManager.EstimateGasContractInvocation(scriptHash, operation, arguments);
+            // Estimate Gas consumed from contract call
+            var estimateContractGasCall =
+                await importedAccount.TransactionManager.EstimateGasContractInvocation(scriptHash, operation, arguments);
 
-                // Confirm a transaction
-                var confirmedTransaction =
-                    await accountSignerTransactionManager.WaitForTxConfirmation(invocationTx.Hash.ToString());
-            }
+            // Confirm a transaction
+            var confirmedTransaction =
+                await importedAccount.TransactionManager.WaitForTxConfirmation(invocationTx.Hash.ToString(), 10000, 10);
+
         }
 
         private static async Task NotificationsService()

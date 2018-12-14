@@ -10,7 +10,6 @@ using NeoModules.JsonRpc.Client;
 using NeoModules.NEP6.Helpers;
 using NeoModules.NEP6.Interfaces;
 using NeoModules.NEP6.Models;
-using NeoModules.NEP6.TransactionManagers;
 using NeoModules.NEP6.Transactions;
 using NeoModules.Rest.Interfaces;
 using NeoModules.RPC;
@@ -21,7 +20,7 @@ using Transaction = NeoModules.NEP6.Transactions.Transaction;
 using TransactionOutput = NeoModules.NEP6.Transactions.TransactionOutput;
 using Utils = NeoModules.NEP6.Helpers.Utils;
 
-namespace NeoModules.NEP6
+namespace NeoModules.NEP6.TransactionManagers
 {
     public class AccountSignerTransactionManager : TransactionManagerBase, IRandomNumberGenerator
     {
@@ -56,15 +55,15 @@ namespace NeoModules.NEP6
         {
             if (txInput == null) return false;
             var serializedSignedTransaction = SignTransaction(txInput);
-            return await SendTransactionAsync(serializedSignedTransaction.ToHexString());
+            return await base.SendTransactionAsync(serializedSignedTransaction.ToHexString());
         }
-
+        
         /// <summary>
         /// Signs a Transaction object
         /// </summary>
         /// <param name="txInput"></param>
         /// <param name="signed"></param>
-        public byte[] SignTransaction(Transaction txInput, bool signed = true)
+        public override byte[] SignTransaction(Transaction txInput, bool signed = true)
         {
             return txInput.Sign(_accountKey, signed);
         }
@@ -80,42 +79,11 @@ namespace NeoModules.NEP6
         }
 
         /// <summary>
-        /// Makes a 'getrawtransaction ' RPC call to the connected node.
-        /// Only returns if the Transaction already has a block hash (indicates that is part of a block, therefore is confirmed)
-        /// </summary>
-        /// <param name="tx"></param>
-        /// <returns></returns>
-        public override async Task<RPC.DTOs.Transaction> WaitForTxConfirmation(string tx)
-        {
-            while (true)
-            {
-                var confirmedTx = await GetTransaction(tx);
-                if (confirmedTx != null && !string.IsNullOrEmpty(confirmedTx.Blockhash)) return confirmedTx;
-                await Task.Delay(10000);
-            }
-        }
-
-        /// <summary>
-        /// Makes a 'invokescript' RPC call to the connected node.
-        /// Return the gas cost if the contract tx is "simulated" correctly
-        /// </summary>
-        /// <param name="scriptHash"></param>
-        /// <param name="operation"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public async Task<decimal> EstimateGasContractInvocation(byte[] scriptHash, string operation,
-            object[] args)
-        {
-            var bytes = Utils.GenerateScript(scriptHash.ToScriptHash(), operation, args);
-            return await EstimateGasAsync(bytes.ToHexString());
-        }
-
-        /// <summary>
         /// Creates a 'ClaimTransaction', signs it and send a 'sendrawtransaction' RPC call to the connected node.
         /// This method does not put gas into claimable state. Can only claim 'unclaimable' amount. 
         /// </summary>
         /// <returns></returns>
-        public async Task<ClaimTransaction> ClaimGas(UInt160 changeAddress = null)
+        public override async Task<ClaimTransaction> ClaimGas(UInt160 changeAddress = null)
         {
             var (claimable, amount) =
                 await TransactionBuilderHelper.GetClaimable(AddressScriptHash.ToAddress(), _restService);
@@ -162,7 +130,7 @@ namespace NeoModules.NEP6
         /// <param name="scriptHash"></param>
         /// <param name="script"></param>
         /// <returns></returns>
-        public async Task<Transaction> AssetlessContractCall(byte[] scriptHash, byte[] script)
+        public override async Task<Transaction> AssetlessContractCall(byte[] scriptHash, byte[] script)
         {
             var tx = new InvocationTransaction()
             {
@@ -201,7 +169,7 @@ namespace NeoModules.NEP6
         /// <param name="fee"></param>
         /// <param name="attributes"></param>
         /// <returns></returns>
-        public async Task<Transaction> CallContract(string contractScriptHash, string operation,
+        public override async Task<Transaction> CallContract(string contractScriptHash, string operation,
             object[] args, IEnumerable<TransferOutput> outputs = null,
             decimal fee = 0, List<TransactionAttribute> attributes = null)
         {
@@ -243,7 +211,7 @@ namespace NeoModules.NEP6
         /// <param name="changeAddress"></param>
         /// <param name="fee"></param>
         /// <returns></returns>
-        public async Task<Transaction> TransferNep5(List<TransactionAttribute> attributes,
+        public override async Task<Transaction> TransferNep5(List<TransactionAttribute> attributes,
             IEnumerable<TransferOutput> outputs,
             UInt160 changeAddress = null, decimal fee = 0)
         {
@@ -314,10 +282,10 @@ namespace NeoModules.NEP6
         /// <param name="changeAddress"></param>
         /// <param name="fee"></param>
         /// <returns></returns>
-        public async Task<ContractTransaction> SendNativeAsset(List<TransactionAttribute> attributes,
+        public override async Task<ContractTransaction> SendNativeAsset(List<TransactionAttribute> attributes,
             IEnumerable<TransferOutput> outputs,
             UInt160 changeAddress = null,
-            decimal fee = 0) //todo from change
+            decimal fee = 0)
         {
             ContractTransaction tx = new ContractTransaction();
             if (attributes == null) attributes = new List<TransactionAttribute>();
@@ -330,7 +298,21 @@ namespace NeoModules.NEP6
             return success ? tx : null;
         }
 
-        public async Task<InvocationTransaction> DeployContract(byte[] contractScript, byte[] parameterList,
+
+        /// <summary>
+        /// Creates an invocation contract with a contract script to be deployed on the network.
+        /// </summary>
+        /// <param name="contractScript"></param>
+        /// <param name="parameterList"></param>
+        /// <param name="returnType"></param>
+        /// <param name="properties"></param>
+        /// <param name="name"></param>
+        /// <param name="version"></param>
+        /// <param name="author"></param>
+        /// <param name="email"></param>
+        /// <param name="description"></param>
+        /// <returns></returns>
+        public override async Task<InvocationTransaction> DeployContract(byte[] contractScript, byte[] parameterList,
             ContractParameterType returnType, ContractPropertyState properties,
             string name, string version, string author, string email, string description)
         {
@@ -372,7 +354,7 @@ namespace NeoModules.NEP6
         /// <param name="changeAddress"></param>
         /// <param name="fee"></param>
         /// <returns></returns>
-        public T MakeTransaction<T>(T tx, UInt160 from = null, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8)) where T : Transaction
+        private T MakeTransaction<T>(T tx, UInt160 from = null, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8)) where T : Transaction
         {
             if (tx.Outputs == null) tx.Outputs = new TransactionOutput[0];
             if (tx.Attributes == null) tx.Attributes = new TransactionAttribute[0];

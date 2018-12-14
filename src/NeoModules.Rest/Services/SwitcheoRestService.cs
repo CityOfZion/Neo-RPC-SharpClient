@@ -437,7 +437,7 @@ namespace NeoModules.Rest.Services
         /// <param name="order"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<ExecuteOrderResponse> ExecuteOrder(ExecuteOrder order, string id) //todo ExecuteOrderResponse
+        public async Task<ExecuteOrderResponse> ExecuteOrder(ExecuteOrder order, string id)
         {
             var json = JsonConvert.SerializeObject(order);
             var signaturesJson = $"{{\"signatures\":{json}}}";
@@ -552,7 +552,7 @@ namespace NeoModules.Rest.Services
         private const string getOffers = "offers";
         private const string getTrades = "trades";
         private const string getRecentTrades = "trades/recent";
-        private const string getBalances = "balances"; //todo
+        private const string getBalances = "balances";
         private const string createDeposit = "deposits";
         private const string executeDeposit = "deposits/:id/broadcast";
         private const string createWithdrawl = "withdrawals";

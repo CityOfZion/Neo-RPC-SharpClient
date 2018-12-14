@@ -87,7 +87,8 @@ namespace NeoModules.NEP6.Helpers
         }
 
         public static byte[]
-            GenerateScript(UInt160 script, string operation, object[] args, bool addNonce = false) //todo maintain nonce for sending the same txhash in case of tx failure/mempool
+            GenerateScript(UInt160 script, string operation, object[] args, bool addNonce = false) 
+            //todo maintain nonce for sending the same txhash in case of tx failure/mempool
         {
             using (var sb = new ScriptBuilder())
             {

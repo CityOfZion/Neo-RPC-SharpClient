@@ -26,16 +26,9 @@ namespace NeoModules.Rest.Services
         private static readonly string getAllNodes = "get_all_nodes/";
         private static readonly string getTransaction = "get_transaction/";
         private static readonly string getAddressAbstracts = "get_address_abstracts/";
-        private static readonly string getAddressNeon = "get_address_neon/";
         private static readonly string getAddressToAddressAbstracts = "get_address_to_address_abstracts/";
-        private static readonly string getAsset = "get_asset/";
-        private static readonly string getAssets = "get_assets/";
         private static readonly string getBlock = "get_block/";
-        private static readonly string getFeesInRange = "get_fees_in_range/";
         private static readonly string getHeight = "get_height/";
-        private static readonly string getHighestBlock = "get_highest_block/";
-        private static readonly string getLastBlocks = "get_last_blocks/";
-        private static readonly string getLastTransactions = "get_last_transactions/";
         private static readonly string getLastTransactionsByAddress = "get_last_transactions_by_address/";
         private static readonly string getNodes = "get_nodes/";
 
