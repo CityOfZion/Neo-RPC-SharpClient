@@ -33,8 +33,11 @@ Need info? [Create an issue](https://github.com/CityOfZion/NeoModules/issues/new
 ## Table of Contents
 
 - [Getting Started](https://github.com/CityOfZion/NeoModules#getting-started)
-  - [Prerequisites](hhttps://github.com/CityOfZion/NeoModules#prerequisites)
-  - [Installing](hhttps://github.com/CityOfZion/NeoModules#installing)
+  - [Prerequisites](https://github.com/CityOfZion/NeoModules#prerequisites)
+  - [Installing](https://github.com/CityOfZion/NeoModules#installing)
+- [RPC client](https://github.com/CityOfZion/NeoModules#RPC-client)
+- [Rest services](https://github.com/CityOfZion/NeoModules#Rest-services)
+- [NEP6 Compatible Wallet](https://github.com/CityOfZion/NeoModules#NEP6-Compatible-Wallet)
 - [Authors](https://github.com/CityOfZion/NeoModules#authors)
 - [License](https://github.com/CityOfZion/NeoModules#license)
 
@@ -62,6 +65,8 @@ PM > Install-Package NeoModules.RPC
 ```
 
 ## RPC client
+
+NeoModules first package is the RPC client. This very helpful for projects that need to request info to official nodes, and do not want to waste time on creating a client. It's support all available rpc calls, with DTO's.
 
 Develop with decoupling in mind to make maintenance and new RPC methods implemented more quickly:
 
@@ -103,18 +108,20 @@ var bestBlockHash  = await blockService.GetBestBlockHash.SendRequestAsync();
 All rpc calls return a DTO or a simple type like string or int.
 
 ### NEP 5 service
-You can also create a service to query NEP5 tokens. 
+You can also create a service to query NEP5 tokens. The bool parameter refers to human readable. So you can get the default rpc response in hexadecimal format, or use the bool = true, to return in a human readable format.
+GetTotalSupply and GetBalance need the token decimals to return a correct result.
 
 ```C#
-var scriptHash = "ed07cffad18f1308db51920d99a2af60ac66a7b3";
-var nep5Service = NeoNep5Service(new RpcClient(new Uri("http://seed2.aphelion-neo.com:10332")));
-var name = await nep5Service.GetName(scriptHash, true);
-var decimals = await nep5Service.GetDecimals(scriptHash);
-var totalsupply = await nep5Service.GetTotalSupply(scriptHash, 8);
-var symbol = await nep5Service.GetSymbol(scriptHash, true);
-var balance = await nep5Service.GetBalance(scriptHash, "0x3640b023405b4b9c818e8387bd01f67bba04dad2", 8);
+var name = await nep5Service.GetName("ed07cffad18f1308db51920d99a2af60ac66a7b3", true);
+var decimals = await nep5Service.GetDecimals("ed07cffad18f1308db51920d99a2af60ac66a7b3");
+var totalsupply = await nep5Service.GetTotalSupply("ed07cffad18f1308db51920d99a2af60ac66a7b3", 8);
+var symbol = await nep5Service.GetSymbol("ed07cffad18f1308db51920d99a2af60ac66a7b3", true);
+var balance = await nep5Service.GetBalance("ed07cffad18f1308db51920d99a2af60ac66a7b3",               "0x3640b023405b4b9c818e8387bd01f67bba04dad2", 8);
+
 Debug.WriteLine($"Token info: \nName: {name} \nSymbol: {symbol} \nDecimals: {decimals} \nTotalSupply: {totalsupply} \nBalance: {balance}");
-                
+
+Example:
+
 Token info: 
 Name: Trinity Network Credit 
 Symbol: TNC 
@@ -124,38 +131,105 @@ Balance: 1457.82
 ```
 
 ## Rest services
-### Create Rest service (only neoscan available right now)
 
+NeoModules features the most popular REST APIs from Neo ecosystem. All the API's return DTO's or simple variables.
+
+### Neoscan service
+
+You can use the official urls
 ```C# 
 var restService = new NeoScanRestService(NeoScanNet.MainNet);
 ```
-or use your own local NeoScan
+or use your own local instance of Neoscan
 
 ```C# 
-var restService = new NeoScanRestService("https://url.here/api/main_net[or test_net]/v1/");
+var neoscanService = new NeoScanRestService("https://url.here/api/main_net[or test_net]/v1/");
 ```
 
-### Using the API
-
-```C# 
-var transaction_json = await restService.GetTransactionAsync("599dec5897d416e9a668e7a34c073832fe69ad01d885577ed841eec52c1c52cf");
+All the endpoints are covered. For the official documentation, refer to https://neoscan.io/docs/index.html#api-v1.
+```C#  
+var getBalance = await neoscanService.GetBalanceAsync(testAddress);
+var getClaimed = await neoscanService.GetClaimedAsync(testAddress);
+var getClaimable = await neoscanService.GetClaimableAsync(testAddress);
+var getUnclaimed = await neoscanService.GetUnclaimedAsync(testAddress);
+var nodes = await neoscanService.GetAllNodesAsync();
+var transaction = await neoscanService.GetTransactionAsync(              "610e2a4c7cdc4f311be65cee48e076871b685e13cc750397f4ee5f800da3309a");
+var height = await neoscanService.GetHeight();
+var abstractAddress = await neoscanService.GetAddressAbstracts("AGbj6WKPUWHze12zRyEL5sx8nGPVN6NXUn", 0);
+var addressToAddressAbstract = await neoscanService.GetAddressToAddressAbstract(
+                "AJ5UVvBoz3Nc371Zq11UV6C2maMtRBvTJK",
+                "AZCcft1uYtmZXxzHPr5tY7L6M85zG7Dsrv", 0);
+var block = await neoscanService.GetBlock("54ffd56d6a052567c5d9abae43cc0504ccb8c1efe817c2843d154590f0b572f7");
+var lastTransactionsByAddress = await neoscanService.GetLastTransactionsByAddress("AGbj6WKPUWHze12zRyEL5sx8nGPVN6NXUn", 0);
 ```
-This returns the json in string format. But you can also transform the result to a defined DTO for easier use:
 
-```C# 
-var transaction_json = await restService.GetTransactionAsync("599dec5897d416e9a668e7a34c073832fe69ad01d885577ed841eec52c1c52cf");
-var transactionDto = Transaction.FromJson(transaction_json);
-```
-You can see all the available calls in Demo console project.
+### Nodes list
 
-## Nodes list
-Besides the "get_all_nodes" call on NeoScan API, there also an option to use http://monitor.cityofzion.io/ to get all the nodes with some extra info.
+Besides the "get_all_nodes" call on Neoscan API, there also an option to use http://monitor.cityofzion.io/ to get all the nodes with some extra info.
 
 ```C# 
 var service = new NeoNodesListService();
 var result = await service.GetNodesList(MonitorNet.TestNet);
 var nodes = JsonConvert.DeserializeObject<NodeList>(result);
 ```
+
+### Notifications service
+
+This is a service that persists all the events emitted from smart contracts, and provide a REST interface for applications that wish to query those event.
+
+You can use an int representing the node number you want to connect (1-5), or insert the explicit url for the server (your own notification server or others)
+```C# 
+var notificationService = new NotificationService("https://n1.cityofzion.io/v1");
+``` 
+All the api points are covered. Examples:
+
+```C# 
+var addressNotifications = await notificationService.GetAddressNotifications("AGfGWQeM6md6RtEsTUivQNXhp8p4ytkDMR", 1, null, 13, 2691913, 500);
+var blockNotifications = await notificationService.GetBlockNotifications(10);
+var contractNotifications = await notificationService.GetContractNotifications("0x67a5086bac196b67d5fd20745b0dc9db4d2930ed");
+var tokenList = await notificationService.GetTokens();
+var transaction = await notificationService.GetTransactionNotifications("1db9ad15febbf7b9cfa11603ecbe52aad5be6137a9e1d29e83465fa664c2a6ed");
+``` 
+
+### HappyNodes service
+Happynodes is a blockchain network monitor and visualisation tool designed for the NEO Smart Economy Blockchain. It exposes a REST API that it's fully covered in NeoModules.
+
+Create the service. The default contructor routes to https://api.happynodes.f27.ventures/redis/, but you can use your own if want too:
+
+```C# 
+var happyNodesService = new HappyNodesService();
+``` 
+Again, all API calls are covered:
+ 
+```C# 
+var bestBlock = await happyNodesService.GetBestBlock();
+var lastBlock = await happyNodesService.GetLastBlock();
+var blockTime = await happyNodesService.GetBlockTime();
+
+var unconfirmedTxs = await happyNodesService.GetUnconfirmed();
+
+var nodesFlat = await happyNodesService.GetNodesFlat();
+var nodes = await happyNodesService.GetNodes();
+var nodeById = await happyNodesService.GetNodeById(482);
+var edges = await happyNodesService.GetEdges();
+var nodesList = await happyNodesService.GetNodesList();
+
+var dailyHistory = await happyNodesService.GetDailyNodeHistory();
+var weeklyHistory = await happyNodesService.GetWeeklyNodeHistory();
+
+var dailyStability = await happyNodesService.GetDailyNodeStability(480);
+var weeklyStability = await happyNodesService.GetWeeklyNodeStability(0);
+
+var dailyLatency = await happyNodesService.GetDailyNodeLatency(480);
+var weeklyLatency = await happyNodesService.GetWeeklyNodeLatency(480);
+var blockHeightLag = await happyNodesService.GetNodeBlockheightLag(0);
+var endpoints = await happyNodesService.GetEndPoints();
+```
+
+### Switcheo service
+
+Switcheo is the most popular dex (decentralized exchange) on NEO right now. NeoModules also supports the full public API. You can use this service to interact with the dex (place orders, sign message, etc.). Because this service is a lot more complicated that the others mention above, there is a separated project called "NeoModules.SwitcheoDemo" where you have all the calls and features demonstrated. Of course, you can check the official documentation here: https://docs.switcheo.network/.
+
 
 ## NEP6 Compatible Wallet
 The wallet creation is of WalletManager.cs responsability. You can use this online or offline, it only depends on the initialization.
@@ -176,7 +250,7 @@ Or use NEP6 (this one uses async/await because it can be a heavy operation, espe
 var importedAccount = await walletManager.ImportAccount("** INSERT NEP6 PASSPHRASE HERE **", "** PASSWORD **", "Custom account label");
 ```
 
-## Transactions
+### Transactions
 For now, you need to use this check before using the TransactionManager, responsable for the making and signing the transactions. This is needed because NeoModules will use different signing strategies, but for now, only the AccountSignerTransactionManager is available.
 
 ### Sending native assets
