@@ -9,6 +9,7 @@ using NeoModules.Core.KeyPair;
 using NeoModules.JsonRpc.Client;
 using NeoModules.NEP6.Helpers;
 using NeoModules.NEP6.Models;
+using NeoModules.NEP6.TransactionManagers;
 using NeoModules.Rest.Interfaces;
 using NeoModules.Rest.Services;
 using ECCurve = NeoModules.Core.KeyPair.Cryptography.ECC.ECCurve;

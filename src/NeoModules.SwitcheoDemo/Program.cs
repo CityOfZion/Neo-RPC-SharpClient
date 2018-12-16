@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using NeoModules.Core;
 using NeoModules.JsonRpc.Client;
+using NeoModules.NEP6.TransactionManagers;
 using NeoModules.NEP6.Transactions;
 using NeoModules.Rest.DTOs.Switcheo;
 using NeoModules.Rest.Helpers;
