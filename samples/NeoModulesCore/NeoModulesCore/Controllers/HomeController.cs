@@ -17,7 +17,7 @@ namespace NeoModulesCore.Controllers
 
         public IActionResult About()
         {
-            ViewData["Message"] = "Your application description page.";
+            ViewData["Message"] = "This is a ASP.NET Core demo web application to show the several usages of the NeoModules package.";
 
             return View();
         }

@@ -1,0 +1,132 @@
+﻿@using NeoModules.Rest.DTOs.HappyNodes
+
+@{
+    ViewData["Title"] = "Network";
+}
+
+<h2>HappyNodes Service Demo</h2>
+<br />
+<h4>Last Block: @ViewData["LastBlock"]</h4>
+<h4>Average block time: @ViewData["BlockTime"] seconds</h4>
+
+<br />
+<h3 style="color: green">Unconfirmed Transactions</h3>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            Tx hash
+        </th>
+        <th>
+            Hostname
+        </th>
+        <th>
+            Connection Id
+        </th>
+        <th>
+            Last block height
+        </th>
+        <th>
+            Node count
+        </th>
+        <th>
+            Port
+        </th>
+        <th>
+            Protocol
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (UnconfirmedTransaction tx in (IEnumerable<UnconfirmedTransaction>)ViewData["UnconfirmedTxs"])
+    {
+        <tr>
+            <td>@tx.Tx</td>
+            <td>@tx.Hostname</td>
+            <td>@tx.ConnectionId</td>
+            <td>@tx.LastBlockheight</td>
+            <td>@tx.NodeCount</td>
+            <td>@tx.Port</td>
+            <td>@tx.Protocol.ToString()</td>
+        </tr>
+    }
+    </tbody>
+</table>
+<br/>
+<br/>
+
+<h3 style="color: green">Node List</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Address
+            </th>
+            <th>
+                Height
+            </th>
+            <th>
+                Version
+            </th>
+            <th>
+                Connection Count
+            </th>
+            <th>
+                Health Score
+            </th>
+            <th>
+                Lat & Long
+            </th>
+            <th>
+                Locale
+            </th>
+            <th>
+                Latency
+            </th>
+            <th>
+                Mempool Size
+            </th>
+            <th>
+                P2P Tcp Status
+            </th>
+            <th>
+                P2P Ws Status
+            </th>
+            <th>
+                Port
+            </th>
+            <th>
+                Protocol
+            </th>
+            <th>
+                Stability
+            </th>
+            <th>
+                Peers
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (FlatNode node in (IEnumerable<FlatNode>)ViewData["Nodes"])
+        {
+            <tr>
+                <td>@node.Address.ToString()</td>
+                <td>@node.Blockheight</td>
+                <td>@node.Version</td>
+                <td>@node.ConnectionCounts</td>
+                <td>@node.HealthScore.ToString("0.##")</td>
+                <td>@node.Lat|@node.Long</td>
+                <td>@node.Locale</td>
+                <td>@node.Latency.ToString("0.##")</td>
+                <td>@node.MempoolSize</td>
+                <td>@node.P2PTcpStatus.ToString()</td>
+                <td>@node.P2PWsStatus.ToString()</td>
+                <td>@node.Port</td>
+                <td>@node.Protocol.ToString()</td>
+                <td>@node.Stability</td>
+                <td>@node.ValidatedPeersCounts</td>
+            </tr>
+        }
+    </tbody>
+</table>
