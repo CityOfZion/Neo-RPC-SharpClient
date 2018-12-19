@@ -57,10 +57,9 @@ namespace NeoModules.RPC.Services
             if (result.State == "FAULT, BREAK")
                 throw new RpcResponseException(new RpcError(0, "RPC state response: FAULT, BREAK "));
 
-            var resultString = result.Stack[0].Value.ToString();
-            if (decimals.Equals(0)) return Convert.ToInt64(resultString, 16);
+            var totalSupplyBigInteger = new BigInteger(result.Stack[0].Value.ToString().HexStringToBytes());
+            if (decimals.Equals(0)) return (decimal) totalSupplyBigInteger;
 
-            var totalSupplyBigInteger = new BigInteger(resultString.HexStringToBytes());
             var totalSupply = Nep5Helper.CalculateDecimalFromBigInteger(totalSupplyBigInteger, decimals);
 
             return totalSupply;
@@ -83,10 +82,9 @@ namespace NeoModules.RPC.Services
             if (result.State == "FAULT, BREAK")
                 throw new RpcResponseException(new RpcError(0, "RPC state response: FAULT, BREAK "));
 
-            var resultString = result.Stack[0].Value.ToString();
-            if (decimals.Equals(0)) return Convert.ToInt64(resultString, 16);
+            var balanceBigInteger = new BigInteger(result.Stack[0].Value.ToString().HexStringToBytes());
+            if (decimals.Equals(0)) return (decimal) balanceBigInteger;
 
-            var balanceBigInteger = new BigInteger(resultString.HexStringToBytes());
             var balance =  Nep5Helper.CalculateDecimalFromBigInteger(balanceBigInteger, decimals);
 
             return balance;
