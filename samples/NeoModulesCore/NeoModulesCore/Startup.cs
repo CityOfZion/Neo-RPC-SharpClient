@@ -4,9 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
 using NeoModules.Rest.Services;
-using NeoModulesCore.Models;
 
 namespace NeoModulesCore
 {
