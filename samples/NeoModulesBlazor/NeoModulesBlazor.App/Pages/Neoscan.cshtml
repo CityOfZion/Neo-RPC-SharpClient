@@ -1,0 +1,120 @@
+﻿@page "/neoscanApi"
+@using NeoModules.Rest.Interfaces
+@using NeoModules.Rest.DTOs.NeoScan
+@inject INeoscanService NeoscanService
+
+<h2>Neoscan service</h2>
+<br />
+<h4>Get address balance</h4>
+<input placeholder="Insert address" bind="@AddressToGetBalance" />
+<button onclick=@(async () => await GetAddressBalance())>Get balance</button>
+
+@if (AddressBalance != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Asset
+                </th>
+                <th>
+                    Symbol
+                </th>
+                <th>
+                    Amount
+                </th>
+                <th>
+                    Asset Hash
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var balance in AddressBalance)
+            {
+                <tr>
+                    <td>@balance.Asset</td>
+                    <td>@balance.AssetSymbol</td>
+                    <td>@balance.Amount</td>
+                    <td>@balance.AssetHash</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<br />
+<br />
+<h4>Get claimable </h4>
+<input placeholder="Insert address" bind="@AddressToGetClaimable" />
+<button onclick=@(async () => await GetClaimable())>Get claimable</button>
+
+@if (AddressClaimable != null)
+{
+    <h5>Unclaimed: @AddressClaimable.Unclaimed</h5>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Value
+                </th>
+                <th>
+                    Unclaimed
+                </th>
+                <th>
+                    Txid
+                </th>
+                <th>
+                    SysFee
+                </th>
+                <th>
+                    StartHeight
+                </th>
+                <th>
+                    EndHeight
+                </th>
+                <th>
+                    N
+                </th>
+                <th>
+                    Generated
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var claim in AddressClaimable.ClaimableList)
+            {
+                <tr>
+                    <td>@claim.Value</td>
+                    <td>@claim.Unclaimed</td>
+                    <td>@claim.Txid</td>
+                    <td>@claim.SysFee</td>
+                    <td>@claim.StartHeight</td>
+                    <td>@claim.EndHeight</td>
+                    <td>@claim.N</td>
+                    <td>@claim.Generated</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@functions {
+
+private string AddressToGetBalance { get; set; } = "";
+private string AddressToGetClaimable { get; set; } = "";
+
+IList<Balance> AddressBalance;
+Claimable AddressClaimable;
+
+private async Task GetAddressBalance()
+{
+    var balance = await NeoscanService.GetBalanceAsync(AddressToGetBalance);
+    AddressBalance = balance.Balance;
+}
+
+private async Task GetClaimable()
+{
+    AddressClaimable = await NeoscanService.GetClaimableAsync(AddressToGetClaimable);
+}
+
+}
