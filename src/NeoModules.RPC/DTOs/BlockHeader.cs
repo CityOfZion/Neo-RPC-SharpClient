@@ -8,10 +8,10 @@ namespace NeoModules.RPC.DTOs
         public string Hash { get; set; }
 
         [JsonProperty("size")]
-        public long Size { get; set; }
+        public int Size { get; set; }
 
         [JsonProperty("version")]
-        public long Version { get; set; }
+        public int Version { get; set; }
 
         [JsonProperty("previousblockhash")]
         public string Previousblockhash { get; set; }
@@ -23,7 +23,7 @@ namespace NeoModules.RPC.DTOs
         public long Time { get; set; }
 
         [JsonProperty("index")]
-        public long Index { get; set; }
+        public int Index { get; set; }
 
         [JsonProperty("nonce")]
         public string Nonce { get; set; }
@@ -35,7 +35,7 @@ namespace NeoModules.RPC.DTOs
         public Script Script { get; set; }
 
         [JsonProperty("confirmations")]
-        public long Confirmations { get; set; }
+        public int Confirmations { get; set; }
 
         [JsonProperty("nextblockhash")]
         public string Nextblockhash { get; set; }

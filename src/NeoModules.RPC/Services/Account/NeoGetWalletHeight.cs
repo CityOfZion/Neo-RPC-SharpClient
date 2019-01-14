@@ -24,7 +24,7 @@ namespace NeoModules.RPC.Services.Account
     ///     "result": 2713183
     /// }
     /// </Summary>
-    public class NeoGetWalletHeight: GenericRpcRequestResponseHandlerNoParam<long>
+    public class NeoGetWalletHeight: GenericRpcRequestResponseHandlerNoParam<int>
     {
         public NeoGetWalletHeight(IClient client) : base(client, ApiMethods.getwalletheight.ToString())
         {

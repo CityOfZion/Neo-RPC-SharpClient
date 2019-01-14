@@ -24,7 +24,7 @@ namespace NeoModules.RPC.DTOs
         public long Time { get; set; }
 
         [JsonProperty("index")]
-        public long Index { get; set; }
+        public int Index { get; set; }
 
         [JsonProperty("nonce")]
         public string Nonce { get; set; }
