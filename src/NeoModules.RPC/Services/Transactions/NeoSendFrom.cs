@@ -75,7 +75,7 @@ namespace NeoModules.RPC.Services.Transactions
 		{
 		}
 
-		public Task<DTOs.Transaction> SendRequestAsync(string assetId, string transferAddress, string paymentAddress, double amount, double fee = 0, object id = null)
+		public Task<DTOs.Transaction> SendRequestAsync(string assetId, string transferAddress, string paymentAddress, decimal amount, decimal fee = 0, object id = null)
 		{
 			if (string.IsNullOrEmpty(assetId)) throw new ArgumentNullException(nameof(assetId));
 			if (string.IsNullOrEmpty(transferAddress)) throw new ArgumentNullException(nameof(transferAddress));
@@ -85,7 +85,7 @@ namespace NeoModules.RPC.Services.Transactions
 			return base.SendRequestAsync(id, assetId, transferAddress, paymentAddress, amount, fee);
 		}
 
-		public RpcRequest BuildRequest(string assetId, string transferAddress, string paymentAddress, double amount, double fee = 0, object id = null)
+		public RpcRequest BuildRequest(string assetId, string transferAddress, string paymentAddress, decimal amount, decimal fee = 0, object id = null)
 		{
 			if (string.IsNullOrEmpty(assetId)) throw new ArgumentNullException(nameof(assetId));
 			if (string.IsNullOrEmpty(transferAddress)) throw new ArgumentNullException(nameof(transferAddress));

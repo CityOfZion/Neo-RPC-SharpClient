@@ -75,7 +75,7 @@ namespace NeoModules.RPC.Services.Transactions
 		{
 		}
 
-		public Task<DTOs.Transaction> SendRequestAsync(List<DTOs.SendManyParameter> parameters, double fee = 0, string changeAddress = null, object id = null)
+		public Task<DTOs.Transaction> SendRequestAsync(List<DTOs.SendManyParameter> parameters, decimal fee = 0, string changeAddress = null, object id = null)
 		{
 			if (parameters.Count == 0) throw new ArgumentOutOfRangeException(nameof(parameters));
 			if (fee < 0) throw new ArgumentOutOfRangeException(nameof(fee));
@@ -84,7 +84,7 @@ namespace NeoModules.RPC.Services.Transactions
 			return base.SendRequestAsync(id, parameters, fee, changeAddress);
 		}
 
-		public RpcRequest BuildRequest(List<DTOs.SendManyParameter> parameters, double fee = 0, string changeAddress = null, object id = null)
+		public RpcRequest BuildRequest(List<DTOs.SendManyParameter> parameters, decimal fee = 0, string changeAddress = null, object id = null)
 		{
 			if (parameters.Count == 0) throw new ArgumentOutOfRangeException(nameof(parameters));
 			if (fee < 0) throw new ArgumentOutOfRangeException(nameof(fee));

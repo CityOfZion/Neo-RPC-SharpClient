@@ -35,7 +35,7 @@ namespace NeoModules.Rest.DTOs.NeoScan
     public class Unspent
     {
         [JsonProperty("value")]
-        public double Value { get; set; }
+        public decimal Value { get; set; }
 
         [JsonProperty("txid")]
         public string TxId { get; set; }
