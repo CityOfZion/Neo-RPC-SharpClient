@@ -31,7 +31,7 @@ namespace NeoModules.NEP6.Helpers
             if (addressBalance.Balance != null)
             {
                 coinList.AddRange(from balanceEntry in addressBalance.Balance
-                                  let child = balanceEntry.Unspent
+                                  let child = balanceEntry?.Unspent
                                   where child?.Count > 0
                                   from unspent in balanceEntry?.Unspent
                                   select new Coin
@@ -39,7 +39,7 @@ namespace NeoModules.NEP6.Helpers
                                       Output = new TransactionOutput
                                       {
                                           AssetId = UInt256.Parse(balanceEntry?.AssetHash),
-                                          ScriptHash = address.ToScriptHash(),
+                                          ScriptHash = address?.ToScriptHash(),
                                           Value = Fixed8.FromDecimal((decimal)unspent.Value),
                                       },
                                       Reference = new CoinReference
