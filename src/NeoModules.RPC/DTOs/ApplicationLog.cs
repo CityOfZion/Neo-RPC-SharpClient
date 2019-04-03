@@ -39,6 +39,15 @@ namespace NeoModules.RPC.DTOs
         public string Contract { get; set; }
 
         [JsonProperty("state")]
-        public List<Stack> State { get; set; }
+        public State State { get; set; }
+    }
+
+    public class State
+    {
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        [JsonProperty("value")]
+        public List<Stack> Value { get; set; }
     }
 }
