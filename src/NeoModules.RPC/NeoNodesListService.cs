@@ -39,7 +39,8 @@ namespace NeoModules.RPC
     public enum SiteType
     {
         Rest,
-        Rpc
+        Rpc,
+        WebSockets
     }
 
     public class NodeList

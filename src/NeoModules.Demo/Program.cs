@@ -19,7 +19,7 @@ namespace NeoModules.Demo
     {
         private static readonly RpcClient RpcClient = new RpcClient(new Uri("https://seed0.cityofzion.io:443"));
 
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             try
             {
@@ -30,23 +30,23 @@ namespace NeoModules.Demo
 
                 var nep5ApiService = SetupNep5Service();
 
-                BlockApiTest(neoApiCompleteService).Wait();
+                await BlockApiTest(neoApiCompleteService);
 
-                TestNep5Service(nep5ApiService).Wait();
+                await TestNep5Service(nep5ApiService);
 
                 //create rest api client
-                RestClientTest().Wait();
+                // RestClientTest().Wait();
 
                 //nodes list from http://monitor.cityofzion.io/
-                NodesListTestAsync().Wait();
+                await NodesListTestAsync();
 
                 //https://n1.cityofzion.io/v1/"
-                NotificationsService().Wait();
+                await NotificationsService();
 
                 //https://api.happynodes.f27.ventures
-                HappyNodesService().Wait();
+                await HappyNodesService();
 
-                WalletAndTransactionsTest().Wait();
+                await WalletAndTransactionsTest();
             }
             catch (Exception ex)
             {
@@ -134,7 +134,7 @@ namespace NeoModules.Demo
         private static async Task<NodeList> NodesListTestAsync()
         {
             var service = new NeoNodesListService();
-            var result = await service.GetNodesList(MonitorNet.TestNet);
+            var result = await service.GetNodesList(MonitorNet.MainNet);
             var nodes = JsonConvert.DeserializeObject<NodeList>(result);
             return nodes;
         }
